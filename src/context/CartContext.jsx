@@ -13,17 +13,26 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([])
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [orders, setOrders] = useState([])
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart')
     if (savedCart) {
       setCart(JSON.parse(savedCart))
     }
+    const savedOrders = localStorage.getItem('orders')
+    if (savedOrders) {
+      setOrders(JSON.parse(savedOrders))
+    }
   }, [])
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart))
   }, [cart])
+
+  useEffect(() => {
+    localStorage.setItem('orders', JSON.stringify(orders))
+  }, [orders])
 
   const addToCart = (product, size, quantity = 1) => {
     setCart(prevCart => {
@@ -76,6 +85,18 @@ export const CartProvider = ({ children }) => {
     return cart.reduce((total, item) => total + item.quantity, 0)
   }
 
+  const placeOrder = (orderDetails) => {
+    const order = {
+      id: Date.now(),
+      items: [...cart],
+      total: getCartTotal(),
+      date: new Date().toISOString(),
+      ...orderDetails
+    }
+    setOrders(prevOrders => [...prevOrders, order])
+    clearCart()
+  }
+
   const value = {
     cart,
     isCartOpen,
@@ -85,7 +106,9 @@ export const CartProvider = ({ children }) => {
     updateQuantity,
     clearCart,
     getCartTotal,
-    getCartItemsCount
+    getCartItemsCount,
+    orders,
+    placeOrder
   }
 
   return (

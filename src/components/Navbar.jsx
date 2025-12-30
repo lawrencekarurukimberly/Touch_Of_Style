@@ -15,6 +15,7 @@ const Navbar = () => {
     { name: 'Gallery', href: '/gallery' },
     { name: 'Testimonials', href: '/testimonials' },
     { name: 'Contact', href: '/contact' },
+    { name: 'Orders', href: '/orders' },
   ]
 
   const isActive = (href) => location.pathname === href
